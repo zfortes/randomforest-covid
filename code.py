@@ -4,10 +4,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
+# Função responsável por ler o arquivo xlsx e salva-lo em uma variável como uma matriz
 def ler_arquivo():
     return pd.read_excel('dataset.xlsx')
 
 
+# Função resposável por preparar o dataset para que possa ser divido entre os dados para treino e os dados para teste
+# Aqui colunas que não são importantes para o resultado foram removidas e as colunas que possuiam valores que não
+# eram números foram convertidas para números.
 def preparar_dataset(df):
     df['SARS-Cov-2 exam result'] = [0 if a == 'negative' else 1 for a in df['SARS-Cov-2 exam result'].values]
 
@@ -26,7 +30,8 @@ def preparar_dataset(df):
     X = pd.get_dummies(df, prefix=columns, columns=columns)
     return X, Y
 
-
+# Possui o mesmo objetivo que a função preparar_dataset, porem esse é utilizado para a questão 2 onde se faz necessário
+# alterar o valor de y para o treinamento.
 def preparar_dataset2(df2, s):
     df = df2.copy()
     df['SARS-Cov-2 exam result'] = [0 if a == 'negative' else 1 for a in df['SARS-Cov-2 exam result'].values]
@@ -46,19 +51,27 @@ def preparar_dataset2(df2, s):
     return X, Y
 
 
+# Função responsável por criar a instância do classificador Random Forest e em seguida treinar o algoritmo com o
+# dataset preparado nos passoa anteriores
 def treina_classificador_random_forest(x_train, y_train):
     clf = RandomForestClassifier(max_depth=50, random_state=0, n_estimators=40)
     clf.fit(x_train, y_train)
     return clf
 
-
+# Verica quais colunas (variáveis) apresentam a maior importância na tabela para a obtenção dos resultados.
 def verifica_categorias_importantes(clf, x_train):
     columns = pd.DataFrame(clf.feature_importances_, index=x_train.columns,
                            columns=['importance']).sort_values('importance', ascending=False)
     pf = columns.head(10)
     print(pf)
 
-
+# A função run executa os seguintes passos:
+# 1 - Lê o arquivo
+# 2 - Prepara o dataset
+# 3 - Separa os dados em treino e teste
+# 4 - Treina o classificador
+# 5 - Faz uma predição e mede a acurácia do algoritmo.
+# Esses passos são repetidos para todos os casos das questões.
 def run():
     df = ler_arquivo()
     df2 = df.copy()
