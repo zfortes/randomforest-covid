@@ -33,10 +33,11 @@ def preparar_dataset(df):
     return X, Y
 
 
-def preparar_dataset2(df):
+def preparar_dataset2(df2, s):
+    df = df2.copy()
     df['SARS-Cov-2 exam result'] = [0 if a == 'negative' else 1 for a in df['SARS-Cov-2 exam result'].values]
 
-    Y = df['Patient addmited to regular ward (1=yes, 0=no)']
+    Y = df[s]
 
     df = df.drop([
 
@@ -88,9 +89,9 @@ def run():
     verifica_categorias_importantes(clf, x_train)
 
     print("======================================================================================")
-    print("                                             DF2                                      ")
+    print("          Patient addmited to regular ward (1=yes, 0=no)                              ")
 
-    x, y = preparar_dataset2(df2)
+    x, y = preparar_dataset2(df2, 'Patient addmited to regular ward (1=yes, 0=no)')
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.40, random_state=55)
     clf = treina_classificador_random_forest(x_train, y_train)
     pred_y = clf.predict(x_test)
@@ -100,5 +101,34 @@ def run():
     print(f'Mean accuracy score: {accuracy:.3}')
     clf.score(x_test, y_test)
     print(classification_report(y_test, pred_y))
-    # verifica_categorias_importantes(clf, x_train)
+    verifica_categorias_importantes(clf, x_train)
+
+    print("======================================================================================")
+    print("                 Patient addmited to semi-intensive unit (1=yes, 0=no)               ")
+
+    x, y = preparar_dataset2(df2, 'Patient addmited to semi-intensive unit (1=yes, 0=no)')
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.40, random_state=55)
+    clf = treina_classificador_random_forest(x_train, y_train)
+    pred_y = clf.predict(x_test)
+    print(pred_y)
+    pred = clf.predict(x_test)
+    accuracy = accuracy_score(y_test, pred)
+    print(f'Mean accuracy score: {accuracy:.3}')
+    clf.score(x_test, y_test)
+    print(classification_report(y_test, pred_y))
+    verifica_categorias_importantes(clf, x_train)
+
+    print("======================================================================================")
+    print("              Patient addmited to intensive care unit (1=yes, 0=no)              ")
+
+    x, y = preparar_dataset2(df2, 'Patient addmited to intensive care unit (1=yes, 0=no)')
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.40, random_state=55)
+    clf = treina_classificador_random_forest(x_train, y_train)
+    pred_y = clf.predict(x_test)
+    print(pred_y)
+    pred = clf.predict(x_test)
+    accuracy = accuracy_score(y_test, pred)
+    print(f'Mean accuracy score: {accuracy:.3}')
+    clf.score(x_test, y_test)
+    print(classification_report(y_test, pred_y))
     verifica_categorias_importantes(clf, x_train)
