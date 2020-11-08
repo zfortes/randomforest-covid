@@ -1,14 +1,8 @@
 import pandas as pd
 from sklearn.metrics import classification_report
 from sklearn.ensemble import RandomForestClassifier
-from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-
-
-# pd.set_option('display.expand_frame_repr', False)
-# X.head(1)
-# print(X)
 
 def ler_arquivo():
     return pd.read_excel('dataset.xlsx')
@@ -27,7 +21,7 @@ def preparar_dataset(df):
         'Patient addmited to intensive care unit (1=yes, 0=no)',
         'Patient age quantile'
     ], axis=1)
-    df = df.fillna(-10, axis=1)
+    df = df.fillna(0, axis=1)
     columns = [key for key in dict(df.dtypes) if dict(df.dtypes)[key] in ['object']]
     X = pd.get_dummies(df, prefix=columns, columns=columns)
     return X, Y
@@ -40,14 +34,13 @@ def preparar_dataset2(df2, s):
     Y = df[s]
 
     df = df.drop([
-
         "Patient ID",
         'Patient addmited to regular ward (1=yes, 0=no)',
         'Patient addmited to semi-intensive unit (1=yes, 0=no)',
         'Patient addmited to intensive care unit (1=yes, 0=no)',
         'Patient age quantile'
     ], axis=1)
-    df = df.fillna(-10, axis=1)
+    df = df.fillna(0, axis=1)
     columns = [key for key in dict(df.dtypes) if dict(df.dtypes)[key] in ['object']]
     X = pd.get_dummies(df, prefix=columns, columns=columns)
     return X, Y
@@ -63,11 +56,6 @@ def verifica_categorias_importantes(clf, x_train):
     columns = pd.DataFrame(clf.feature_importances_, index=x_train.columns,
                            columns=['importance']).sort_values('importance', ascending=False)
     pf = columns.head(10)
-
-    feat_importances = pd.Series(clf.feature_importances_, index=x_train.columns)
-    # feat_importances.nlargest(10).plot(kind='barh')
-    # plt.title("Top 10 important features")
-    # plt.show()
     print(pf)
 
 
